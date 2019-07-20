@@ -44,14 +44,21 @@ var admin_role = {role:"Admin", inherits:"", grant:[
 //---------------------------------------------------
 //publicGuest Policies
 var pg_articleReadPolicy = {action:"read", records:"any", fields:"title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
-var pg_userReadPolicy = {action:"read",   records:"$resource.roleId != 1&$resource.roleId != 3", fields:"displayName", limit:{amount:-1, rule:""}};
-	
+var pg_userReadPolicy = {action:"read",   records:"$resource.roleId!= 1&$resource.roleId!=3", fields:"displayName", limit:{amount:-1, rule:""}};
+var pg_commentReadPolicy = {action:"read",   records:"any", fields:"commentText, authorId, repliedTo", limit:{amount:-1, rule:""}};
+var pg_likeReadPolicy = {action:"read",   records:"any", fields:"userId, articleId", limit:{amount:-1, rule:""}};
+var pg_tagReadPolicy = {action:"read",   records:"any", fields:"tagText, articleId", limit:{amount:-1, rule:""}};
+var pg_followerReadPolicy = {action:"read",   records:"any", fields:"fellowerId, FelloweeId", limit:{amount:-1, rule:""}};	
 //publicGuest resources
 var pg_article = {resource:"Article", policies:[pg_articleReadPolicy]};
 var pg_user = {resource:"User", policies:[pg_userReadPolicy]};
+var pg_comment = {resource:"Comment", policies:[pg_commentReadPolicy]};
+var pg_like = {resource:"Like", policies:[pg_likeReadPolicy]};
+var pg_tag = {resource:"Tag", policies:[pg_tagReadPolicy]};
+var pg_follower = {resource:"Follower", policies:[pg_followerReadPolicy]};
 
 //publicGuest role
-var pg_role = {role:"PublicGuest", inherits:"", grant:[pg_article, pg_user ]};  
+var pg_role = {role:"PublicGuest", inherits:"", grant:[pg_article, pg_user, pg_comment, pg_like, pg_tag, pg_follower]};  
 
 //------------------------------
 //final schema
