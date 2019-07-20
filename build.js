@@ -70,17 +70,25 @@ var pg_role = {role:"PublicGuest", inherits:"", grant:[pg_article, pg_user, pg_c
 //                 Author
 //---------------------------------------------------
 //Author Policies
-
+var Auth_createArticle = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_createLike = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_createComment = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_createFavourite = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_createFollower = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_createTag = {action:"create", records:"resource.roleId = 4", fields:"*", limit:{amount:-1, rule:""}};
 
 
 //Author resources
-
-
-
+var Auth_article = {resource:"Article", policies:[Auth_createArticle]};
+var Auth_like = {resource:"Like", policies:[Auth_createLike]};
+var Auth_comment = {resource:"Comment", policies:[Auth_createComment]};
+var Auth_favourite = {resource:"Favourite", policies:[Auth_createFavourite]};
+var Auth_follower = {resource:"Follower", policies:[Auth_createFollower]};
+var Auth_tag = {resource:"Tag", policies:[Auth_createTag]};
 
 
 //Author role
-
+var auth_role = {role:"Author", inherits:"", grant:[Auth_article,Auth_like,Auth_comment,Auth_favourite,Auth_follower,Auth_tag]}; 
 
 
 //---------------------------------------------------
@@ -101,9 +109,29 @@ var pg_role = {role:"PublicGuest", inherits:"", grant:[pg_article, pg_user, pg_c
 
 
 //---------------------------------------------------
+//              Moderator   
+//---------------------------------------------------
+// Moderator Policies
+var mod_deleteCommentPolicy = {action:"delete", records:"resource.roleId=3", fields:"*", limit:{amount:-1, rule:""}};
+var mod_articleCreatePolicy = {action:"create", records:"any", fields:"isModerated,isDraft", limit:{amount:-1, rule:""}};
+var mod_userCreatePolicy = {action:"create", records:"any", fields:"isSuspended", limit:{amount:-1, rule:""}};
+
+
+// Moderator resources
+var mod_article = {resource:"Article", policies:[mod_articleCreatePolicy]};
+var mod_user = {resource:"User", policies:[mod_userCreatePolicy]};
+var mod_comment = {resource:"Comment", policies:[mod_deleteCommentPolicy]};
+
+
+// Moderator role
+var mod_role = {role:"Moderator", inherits:"", grant:[mod_article, mod_user, mod_comment]};
+
+
+
+//---------------------------------------------------
 //                 Final Schema
 //---------------------------------------------------
-var schema = {accesscontrol:[admin_role, pg_role]};
+var schema = {accesscontrol:[admin_role, pg_role,auth_role]};
 
 fs.writeFile("oktob_rbac.json", JSON.stringify(schema), function(err) {
     if(err) {
