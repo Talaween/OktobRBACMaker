@@ -41,9 +41,21 @@ var admin_role = {role:"Admin", inherits:"", grant:[
 		admin_article, admin_comment, admin_user, admin_like, admin_rate,
 		admin_tag, admin_favourite, admin_follower]};  
 		
-		
+//---------------------------------------------------
+//publicGuest Policies
+var pg_articleReadPolicy = {action:"read", records:"any", fields:"title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
+var pg_userReadPolicy = {action:"read",   records:"$resource.roleId != 1&$resource.roleId != 3", fields:"displayName", limit:{amount:-1, rule:""}};
+	
+//publicGuest resources
+var pg_article = {resource:"Article", policies:[pg_articleReadPolicy]};
+var pg_user = {resource:"User", policies:[pg_userReadPolicy]};
+
+//publicGuest role
+var pg_role = {role:"PublicGuest", inherits:"", grant:[pg_article, pg_user ]};  
+
+//------------------------------
 //final schema
-var schema = {accesscontrol:[admin_role]};
+var schema = {accesscontrol:[admin_role, pg_role]};
 
 fs.writeFile("oktob_rbac.json", JSON.stringify(schema), function(err) {
     if(err) {
