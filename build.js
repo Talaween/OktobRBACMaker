@@ -3,6 +3,31 @@
 //https://www.thomasfrank.se/downloadableJS/JSONeditor_example.html
 //http://www.alkemis.com/johnsonRod/
 
+/*
+All resources has these common fields:
+id, creatorId, ownerId, dateCreated, dateModified, deleted, dateDeleted, note
+
+User		:(username, displayName, password, FirstName, lastName, email, isSuspended)
+Article		:(title, bodyText, publishedDate, authorId, imageURL, note, isDraft, isModerated)
+Comment		:(commentText, authorId, repliedTo, articleId)
+Like		:(userId, articleId)
+Rate		:(userId, articleId, value)
+tag			:(tagText, articleId)
+Favourite	:(userId, articleId)
+Follower	:(fellowerId, FelloweeId)
+
+Roles:
+- Admin:(can create/retrieve/update/delete any resource)
+- PublicGuest:(can read any article and comment, can read any User displayName, can read likes and rates on articles)
+- Moderator:(can delete comments, can set any article isModerated, isDraft, can set is suspended on User )
+- Author:(can add article, can like, comment and fav any article, can follow any other user, can tag only his own articles)
+- PaidAuthor:(extends author, can rate other people articles, can tag other people articles, can delete any comment on his articles)
+
+other policies:
+- No user can rate his own article
+- No user can update his own isSuspended property	
+
+*/
 const fs = require('fs');
 
 //---------------------------------------------------
@@ -49,7 +74,7 @@ var admin_role = {role:"Admin", inherits:"", grant:[
 //---------------------------------------------------
 //PublicGuest policies
 var pg_articleReadPolicy = {action:"read", records:"any", fields:"title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
-var pg_userReadPolicy = {action:"read",   records:"$resource.roleId!= 1&$resource.roleId!=3", fields:"displayName", limit:{amount:-1, rule:""}};
+var pg_userReadPolicy = {action:"read",   records:"$resource.roleId!=1/i&$resource.roleId!=3/i", fields:"displayName", limit:{amount:-1, rule:""}};
 var pg_commentReadPolicy = {action:"read",   records:"any", fields:"commentText, authorId, repliedTo", limit:{amount:-1, rule:""}};
 var pg_likeReadPolicy = {action:"read",   records:"any", fields:"userId, articleId", limit:{amount:-1, rule:""}};
 var pg_tagReadPolicy = {action:"read",   records:"any", fields:"tagText, articleId", limit:{amount:-1, rule:""}};
@@ -70,16 +95,23 @@ var pg_role = {role:"PublicGuest", inherits:"", grant:[pg_article, pg_user, pg_c
 //                 Author
 //---------------------------------------------------
 //Author Policies
-var Auth_createArticle = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_createArticle 	  =	{action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_updateArticle    =	{action:"update", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_deleteArticle    =	{action:"delete", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_readOwnArticle   =	{action:"read", records:"$resource.authorId=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL, note, isDraft, isModerated", limit:{amount:-1, rule:""}};
+var Auth_readOtherArticle = {action:"read", records:"$resource.authorId!=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
+
 var Auth_createLike = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_deleteLike = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_getLike = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+
 var Auth_createComment = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var Auth_createFavourite = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var Auth_createFollower = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_createTag = {action:"create", records:"resource.roleId = 4", fields:"*", limit:{amount:-1, rule:""}};
-
-
+var Auth_createTag = {action:"create", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+	
 //Author resources
-var Auth_article = {resource:"Article", policies:[Auth_createArticle]};
+var Auth_article = {resource:"Article", policies:[Auth_createArticle, Auth_updateArticle, Auth_deleteArticle, Auth_readOwnArticle, Auth_readOtherArticle]};
 var Auth_like = {resource:"Like", policies:[Auth_createLike]};
 var Auth_comment = {resource:"Comment", policies:[Auth_createComment]};
 var Auth_favourite = {resource:"Favourite", policies:[Auth_createFavourite]};
