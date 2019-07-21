@@ -106,17 +106,30 @@ var Auth_deleteLike = {action:"delete", records:"$resource.authorId!=$user.id", 
 var Auth_getLike = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
 var Auth_createComment = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_updateComment = {action:"update", records:"resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_readComment = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_deleteComment = {action:"delete", records:"resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+
 var Auth_createFavourite = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_deleteFavourite = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_readFavourite = {action:"read", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+
 var Auth_createFollower = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_deleteFollower = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_readFollower = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+
 var Auth_createTag = {action:"create", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_updateTag = {action:"update", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_deleteTag = {action:"delete", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var Auth_readTag = {action:"read", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 	
 //Author resources
 var Auth_article = {resource:"Article", policies:[Auth_createArticle, Auth_updateArticle, Auth_deleteArticle, Auth_readOwnArticle, Auth_readOtherArticle]};
-var Auth_like = {resource:"Like", policies:[Auth_createLike]};
-var Auth_comment = {resource:"Comment", policies:[Auth_createComment]};
-var Auth_favourite = {resource:"Favourite", policies:[Auth_createFavourite]};
-var Auth_follower = {resource:"Follower", policies:[Auth_createFollower]};
-var Auth_tag = {resource:"Tag", policies:[Auth_createTag]};
+var Auth_like = {resource:"Like", policies:[Auth_createLike,Auth_deleteLike,Auth_getLike]};
+var Auth_comment = {resource:"Comment", policies:[Auth_createComment,Auth_updateComment,Auth_readComment,Auth_deleteComment]};
+var Auth_favourite = {resource:"Favourite", policies:[Auth_createFavourite,Auth_deleteFavourite,Auth_readFavourite]};
+var Auth_follower = {resource:"Follower", policies:[Auth_createFollower,Auth_deleteFollower,Auth_readFollower]};
+var Auth_tag = {resource:"Tag", policies:[Auth_createTag,Auth_updateTag,Auth_deleteTag,Auth_readTag]};
 
 
 //Author role
