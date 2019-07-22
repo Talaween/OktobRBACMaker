@@ -187,7 +187,7 @@ var mod_role = {role:"Moderator", inherits:"", grant:[mod_article, mod_user, mod
 //---------------------------------------------------
 //                 Final Schema
 //---------------------------------------------------
-var schema = {accesscontrol:[admin_role, pg_role,auth_role,pauth_role]};
+var schema = {accesscontrol:[admin_role, pg_role,auth_role,mod_role,pauth_role]};
 
 fs.writeFile("oktob_rbac.json", JSON.stringify(schema), function(err) {
     if(err) {
