@@ -95,63 +95,74 @@ var pg_role = {role:"PublicGuest", inherits:"", grant:[pg_article, pg_user, pg_c
 //                 Author
 //---------------------------------------------------
 //Author Policies
-var Auth_createArticle 	  =	{action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_updateArticle    =	{action:"update", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_deleteArticle    =	{action:"delete", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_readOwnArticle   =	{action:"read", records:"$resource.authorId=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL, note, isDraft, isModerated", limit:{amount:-1, rule:""}};
-var Auth_readOtherArticle = {action:"read", records:"$resource.authorId!=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
+var auth_createArticle 	  =	{action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var auth_updateArticle    =	{action:"update", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteArticle    =	{action:"delete", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_readOwnArticle   =	{action:"read", records:"$resource.authorId=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL, note, isDraft, isModerated", limit:{amount:-1, rule:""}};
+var auth_readOtherArticle = {action:"read", records:"$resource.authorId!=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
 
-var Auth_createLike = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_deleteLike = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_getLike = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var auth_createLike = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteLike = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_getLike = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
-var Auth_createComment = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_updateComment = {action:"update", records:"resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_readComment = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_deleteComment = {action:"delete", records:"resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_createComment = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var auth_updateComment = {action:"update", records:"resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_readComment = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteComment = {action:"delete", records:"resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 
-var Auth_createFavourite = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_deleteFavourite = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_readFavourite = {action:"read", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_createFavourite = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteFavourite = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_readFavourite = {action:"read", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 
-var Auth_createFollower = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_deleteFollower = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_readFollower = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var auth_createFollower = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteFollower = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_readFollower = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
-var Auth_createTag = {action:"create", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_updateTag = {action:"update", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_deleteTag = {action:"delete", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var Auth_readTag = {action:"read", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_createTag = {action:"create", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_updateTag = {action:"update", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteTag = {action:"delete", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_readTag = {action:"read", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 	
 //Author resources
-var Auth_article = {resource:"Article", policies:[Auth_createArticle, Auth_updateArticle, Auth_deleteArticle, Auth_readOwnArticle, Auth_readOtherArticle]};
-var Auth_like = {resource:"Like", policies:[Auth_createLike,Auth_deleteLike,Auth_getLike]};
-var Auth_comment = {resource:"Comment", policies:[Auth_createComment,Auth_updateComment,Auth_readComment,Auth_deleteComment]};
-var Auth_favourite = {resource:"Favourite", policies:[Auth_createFavourite,Auth_deleteFavourite,Auth_readFavourite]};
-var Auth_follower = {resource:"Follower", policies:[Auth_createFollower,Auth_deleteFollower,Auth_readFollower]};
-var Auth_tag = {resource:"Tag", policies:[Auth_createTag,Auth_updateTag,Auth_deleteTag,Auth_readTag]};
+var auth_article = {resource:"Article", policies:[auth_createArticle, auth_updateArticle, auth_deleteArticle, auth_readOwnArticle, auth_readOtherArticle]};
+var auth_like = {resource:"Like", policies:[auth_createLike,auth_deleteLike,auth_getLike]};
+var auth_comment = {resource:"Comment", policies:[auth_createComment,auth_updateComment,auth_readComment,auth_deleteComment]};
+var auth_favourite = {resource:"Favourite", policies:[auth_createFavourite,auth_deleteFavourite,auth_readFavourite]};
+var auth_follower = {resource:"Follower", policies:[auth_createFollower,auth_deleteFollower,auth_readFollower]};
+var auth_tag = {resource:"Tag", policies:[auth_createTag,auth_updateTag,auth_deleteTag,auth_readTag]};
 
 
 //Author role
-var auth_role = {role:"Author", inherits:"", grant:[Auth_article,Auth_like,Auth_comment,Auth_favourite,Auth_follower,Auth_tag]}; 
+var auth_role = {role:"Author", inherits:"", grant:[auth_article,auth_like,auth_comment,auth_favourite,auth_follower,auth_tag]}; 
 
 
 //---------------------------------------------------
 //                 PaidAuthor
 //---------------------------------------------------
 //PaidAuthor policies
+var pauth_createRate ={action:"create", records:"SELECT * FROM Article WHERE Article.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var pauth_deleteRate ={action:"delete", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.Id=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var pauth_readRate ={action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
+var pauth_createTag ={action:"create", records:"SELECT * FROM Article WHERE Article.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var pauth_updateTag = {action:"update", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var pauth_deleteTag ={action:"delete", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.Id!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var pauth_readRTag ={action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
+var pauth_deleteComment ={action:"delete", records:"SELECT * FROM Article WHERE Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 
 
 //PaidAuthor resources
 
+var pauth_rate = {resource:"Rate", policies:[pauth_createRate,pauth_deleteRate,pauth_readRate]};
+var pauth_comment = {resource:"Comment", policies:[pauth_deleteComment]};
+var pauth_tag = {resource:"Tag", policies:[pauth_createTag,pauth_updateTag,pauth_deleteTag,pauth_readRTag]};
 
 
 
 //PaidAuthor role
 
-
+var pauth_role = {role:"PaidAuthor", inherits:"Author", grant:[pauth_rate,pauth_comment,pauth_tag]}; 
 
 //---------------------------------------------------
 //              Moderator   
@@ -176,7 +187,7 @@ var mod_role = {role:"Moderator", inherits:"", grant:[mod_article, mod_user, mod
 //---------------------------------------------------
 //                 Final Schema
 //---------------------------------------------------
-var schema = {accesscontrol:[admin_role, pg_role,auth_role]};
+var schema = {accesscontrol:[admin_role, pg_role,auth_role,pauth_role]};
 
 fs.writeFile("oktob_rbac.json", JSON.stringify(schema), function(err) {
     if(err) {
