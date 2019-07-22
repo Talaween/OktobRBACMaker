@@ -168,15 +168,15 @@ var pauth_role = {role:"PaidAuthor", inherits:"Author", grant:[pauth_rate,pauth_
 //              Moderator   
 //---------------------------------------------------
 // Moderator Policies
-var mod_deleteCommentPolicy = {action:"delete", records:"resource.roleId=3", fields:"*", limit:{amount:-1, rule:""}};
-var mod_articleCreatePolicy = {action:"create", records:"any", fields:"isModerated,isDraft", limit:{amount:-1, rule:""}};
-var mod_userCreatePolicy = {action:"create", records:"any", fields:"isSuspended", limit:{amount:-1, rule:""}};
+var mod_deleteComment = {action:"delete", records:"resource.roleId=3", fields:"*", limit:{amount:-1, rule:""}};
+var mod_setArticle = {action:"create", records:"any", fields:"isModerated,isDraft", limit:{amount:-1, rule:""}};
+var mod_setUser = {action:"create", records:"any", fields:"isSuspended", limit:{amount:-1, rule:""}};
 
 
 // Moderator resources
-var mod_article = {resource:"Article", policies:[mod_articleCreatePolicy]};
-var mod_user = {resource:"User", policies:[mod_userCreatePolicy]};
-var mod_comment = {resource:"Comment", policies:[mod_deleteCommentPolicy]};
+var mod_article = {resource:"Article", policies:[mod_setArticle]};
+var mod_user = {resource:"User", policies:[mod_setUser]};
+var mod_comment = {resource:"Comment", policies:[mod_deleteComment]};
 
 
 // Moderator role
