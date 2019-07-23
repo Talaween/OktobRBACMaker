@@ -89,20 +89,49 @@ var pg_tag = {resource:"Tag", policies:[pg_tagReadPolicy]};
 var pg_follower = {resource:"Follower", policies:[pg_followerReadPolicy]};
 
 //PublicGuest role
-var pg_role = {role:"PublicGuest", inherits:"", grant:[pg_article, pg_user, pg_comment, pg_like, pg_tag, pg_follower]};  
+var pg_role = {role:"PublicGuest", inherits:"", grant:[pg_article, pg_user, pg_comment, pg_like, pg_tag, pg_follower]}; 
+
+
+//---------------------------------------------------
+//              Moderator   
+//---------------------------------------------------
+// Moderator Policies
+var mod_createArticle = {action:"create", records:"any", fields:"title, bodyText, publishedDate, authorId, imageURL, note,isModerated,isDraft", limit:{amount:-1, rule:""}};
+var mod_updateArticle = {action:"update", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var mod_deleteArticle = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var mod_readArticle = {action:"read", records:"any", fields:"title, bodyText, publishedDate, authorId, imageURL, note,isModerated,isDraft", limit:{amount:-1, rule:""}};
+var mod_createComment = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var mod_updateComment = {action:"update", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var mod_deleteComment = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var mod_readComment = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var mod_setUser = {action:"create", records:"any", fields:"username, displayName, password, FirstName, lastName, email,isSuspended", limit:{amount:-1, rule:""}};
+var mod_updateUser = {action:"update", records:"any", fields:"username, displayName, password, FirstName, lastName, email, isSuspended", limit:{amount:-1, rule:""}};
+var mod_deleteUser = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var mod_readUser = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+
+
+// Moderator resources
+var mod_article = {resource:"Article", policies:[mod_createArticle,mod_updateArticle,mod_deleteArticle,mod_readArticle]};
+var mod_user = {resource:"User", policies:[mod_setUser,mod_updateUser,mod_deleteUser,mod_readUser]};
+var mod_comment = {resource:"Comment", policies:[mod_createComment,mod_updateComment,mod_deleteComment,mod_readComment]};
+
+
+// Moderator role
+var mod_role = {role:"Moderator", inherits:"", grant:[mod_article, mod_user, mod_comment]}; 
+
 
 //---------------------------------------------------
 //                 Author
 //---------------------------------------------------
 //Author Policies
-var auth_createArticle 	  =	{action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var auth_updateArticle    =	{action:"update", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_createArticle 	  =	{action:"create", records:"any", fields:"title, bodyText, publishedDate, authorId, imageURL, note", limit:{amount:-1, rule:""}};
+var auth_updateArticle    =	{action:"update", records:"$resource.authorId=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL, note", limit:{amount:-1, rule:""}};
 var auth_deleteArticle    =	{action:"delete", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 var auth_readOwnArticle   =	{action:"read", records:"$resource.authorId=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL, note, isDraft, isModerated", limit:{amount:-1, rule:""}};
 var auth_readOtherArticle = {action:"read", records:"$resource.authorId!=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
 
 var auth_createLike = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var auth_deleteLike = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteLike = {action:"delete", records:"$resource.authorId =$user.id", fields:"*", limit:{amount:-1, rule:""}};
 var auth_getLike = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
 var auth_createComment = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
@@ -111,11 +140,11 @@ var auth_readComment = {action:"read", records:"any", fields:"*", limit:{amount:
 var auth_deleteComment = {action:"delete", records:"resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 
 var auth_createFavourite = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var auth_deleteFavourite = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var auth_readFavourite = {action:"read", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteFavourite = {action:"delete", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_readFavourite = {action:"read", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 
 var auth_createFollower = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var auth_deleteFollower = {action:"delete", records:"$resource.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteFollower = {action:"delete", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 var auth_readFollower = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
 var auth_createTag = {action:"create", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
@@ -164,23 +193,6 @@ var pauth_tag = {resource:"Tag", policies:[pauth_createTag,pauth_updateTag,pauth
 
 var pauth_role = {role:"PaidAuthor", inherits:"Author", grant:[pauth_rate,pauth_comment,pauth_tag]}; 
 
-//---------------------------------------------------
-//              Moderator   
-//---------------------------------------------------
-// Moderator Policies
-var mod_deleteComment = {action:"delete", records:"resource.roleId=3", fields:"*", limit:{amount:-1, rule:""}};
-var mod_setArticle = {action:"create", records:"any", fields:"isModerated,isDraft", limit:{amount:-1, rule:""}};
-var mod_setUser = {action:"create", records:"any", fields:"isSuspended", limit:{amount:-1, rule:""}};
-
-
-// Moderator resources
-var mod_article = {resource:"Article", policies:[mod_setArticle]};
-var mod_user = {resource:"User", policies:[mod_setUser]};
-var mod_comment = {resource:"Comment", policies:[mod_deleteComment]};
-
-
-// Moderator role
-var mod_role = {role:"Moderator", inherits:"", grant:[mod_article, mod_user, mod_comment]};
 
 
 
