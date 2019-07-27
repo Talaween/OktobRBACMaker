@@ -28,7 +28,494 @@ other policies:
 - No user can update his own isSuspended property	
 
 */
+"use strict";
+
 const fs = require('fs');
+
+//Generate Classes
+
+//---------------------------------------------------
+//                 User Class
+//---------------------------------------------------
+//(username, displayName, password, FirstName, lastName, email, isSuspended)
+
+
+var usernameField = {
+		name:"username",
+		type:"String",
+		required:true,
+		unique:true,
+		validation:{
+			min:4,
+			max:16,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var displayNameField = {
+		name:"displayName",
+		type:"String",
+		required:true,
+		unique:false,
+		validation:{
+			min:4,
+			max:16,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var pwField = {
+		name:"password",
+		type:"String",
+		required:true,
+		unique:false,
+		validation:{
+			min:6,
+			max:16,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var firstnameField = {
+		name:"firstName",
+		type:"String",
+		required:true,
+		unique:false,
+		validation:{
+			min:4,
+			max:16,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var lastnameField = {
+		name:"lastName",
+		type:"String",
+		required:true,
+		unique:false,
+		validation:{
+			min:4,
+			max:16,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var emailField = {
+		name:"email",
+		type:"String",
+		required:true,
+		unique:false,
+		validation:{
+			min:6,
+			max:32,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var isSuspendedField = {
+		name:"isSuspended",
+		type:"Bool",
+		defaultValue:"false",
+		required:true,
+		unique:false,
+		validation:{
+			min:4,
+			max:16,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var userClass = {name:"User", fields:[usernameField,displayNameField, pwField, firstnameField, lastnameField, emailField, isSuspendedField]};
+
+//---------------------------------------------------
+//                 Article Class
+//---------------------------------------------------
+//(title, bodyText, publishedDate, authorId, imageURL, note, isDraft, isModerated)
+
+var titleField = {
+		name:"title",
+		type:"SmallText",
+		required:true,
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var bodyTextField = {
+		name:"bodyText",
+		type:"Text",
+		required:true,
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var publishedDateField = {
+		name:"publishedDate",
+		type:"DateTime",
+		required:true,
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var authorField = {
+		name:"author",
+		type:"User",
+		required:true,
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var imageURLField = {
+		name:"imageURL",
+		type:"String",
+		required:false,
+		unique:false,
+		validation:{
+			min:16,
+			max:4096,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var noteField = {
+		name:"note",
+		type:"MediumText",
+		required:false,
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var isDraftField = {
+		name:"isDraft",
+		type:"Bool",
+		required:true,
+		defaultValue: "true",
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var isModeratedField = {
+		name:"isModerated",
+		type:"Bool",
+		required:true,
+		defaultValue: "false",
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var articleClass = {name:"Article", fields:[titleField, bodyTextField, publishedDateField, authorField, imageURLField, noteField, isDraftField, isModeratedField]};
+
+//---------------------------------------------------
+//                 Comment Class
+//---------------------------------------------------
+//(commentText, authorId, repliedTo, articleId)
+
+var commentTextField = {
+		name:"commentText",
+		type:"MediumText",
+		required:true,
+		defaultValue: null,
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var authorField = {
+		name:"author",
+		type:"User",
+		required:true,
+		defaultValue: null,
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var repliedToField = {
+		name:"repliedTo",
+		type:"User",
+		required:false,
+		defaultValue: null,
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var articleField = {
+		name:"article",
+		type:"Article",
+		required:true,
+		defaultValue: null,
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var commentClass = {name:"Comment", fields:[commentTextField, authorField, repliedToField, articleField]}
+
+//---------------------------------------------------
+//                 Like Class
+//---------------------------------------------------
+//(userId, articleId)
+
+var userField = {
+		name:"user",
+		type:"User",
+		required:true,
+		defaultValue: null,
+		unique:true,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var articleField = {
+		name:"article",
+		type:"Article",
+		required:true,
+		defaultValue: null,
+		unique:true,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var likeClass = {name:"Like", fields:[userField, articleField]};
+
+//---------------------------------------------------
+//                 Rate Class
+//---------------------------------------------------
+//(userId, articleId, value)
+
+var userField = {
+		name:"user",
+		type:"User",
+		required:true,
+		defaultValue: null,
+		unique:true,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var articleField = {
+		name:"article",
+		type:"Article",
+		required:true,
+		defaultValue: null,
+		unique:true,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var valueField = {
+		name:"value",
+		type:"Int",
+		required:true,
+		defaultValue: null,
+		unique:false,
+		validation:{
+			min:1,
+			max:5,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var rateClass = {name:"Rate", fields:[userField, articleField, valueField]};
+
+//---------------------------------------------------
+//                 Tag Class
+//---------------------------------------------------
+//(tagText, articleId)
+
+var tagTextField = {
+		name:"tagText",
+		type:"String",
+		required:true,
+		defaultValue: null,
+		unique:true,
+		validation:{
+			min:3,
+			max:32,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var articleField = {
+		name:"article",
+		type:"Article",
+		required:true,
+		defaultValue: null,
+		unique:true,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var userField = {
+		name:"user",
+		type:"User",
+		required:true,
+		defaultValue: null,
+		unique:false,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var tagClass = {name:"Tag", fields:[tagTextField, articleField, userField]};
+
+//---------------------------------------------------
+//                 Favourite Class
+//---------------------------------------------------
+//(userId, articleId)
+var userField = {
+		name:"user",
+		type:"User",
+		required:true,
+		defaultValue: null,
+		unique:true,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var articleField = {
+		name:"article",
+		type:"Article",
+		required:true,
+		defaultValue: null,
+		unique:true,
+		validation:{
+			min:3,
+			max:32,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var favouriteClass = {name:"Favourite", fields:[userField, articleField]};
+
+//---------------------------------------------------
+//                 Follower Class
+//---------------------------------------------------
+//(fellowerId, FelloweeId)
+var fellowerField = {
+		name:"fellower",
+		type:"User",
+		required:true,
+		defaultValue: null,
+		unique:true,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+	
+var FelloweeField = {
+		name:"Fellowee",
+		type:"User",
+		required:true,
+		defaultValue: null,
+		unique:true,
+		validation:{
+			min:null,
+			max:null,
+			regex:null,
+			regexError:""
+        }
+	};
+
+var followerClass = {name:"Follower", fields:[fellowerField, FelloweeField]};
+
+//*************************************************************************
+//*************************************************************************
+//				Create Role Based Access Control Policies
+//*************************************************************************
+//*************************************************************************
 
 //---------------------------------------------------
 //                 Admin
@@ -75,6 +562,7 @@ var admin_role = {role:"Admin", inherits:"", grant:[
 //PublicGuest policies
 var pg_articleReadPolicy = {action:"read", records:"any", fields:"title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
 var pg_userReadPolicy = {action:"read",   records:"$resource.roleId!=1/i&$resource.roleId!=3/i", fields:"displayName", limit:{amount:-1, rule:""}};
+var pg_userCreatePolicy = {action:"read",   records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var pg_commentReadPolicy = {action:"read",   records:"any", fields:"commentText, authorId, repliedTo", limit:{amount:-1, rule:""}};
 var pg_likeReadPolicy = {action:"read",   records:"any", fields:"userId, articleId", limit:{amount:-1, rule:""}};
 var pg_tagReadPolicy = {action:"read",   records:"any", fields:"tagText, articleId", limit:{amount:-1, rule:""}};
@@ -82,7 +570,7 @@ var pg_followerReadPolicy = {action:"read",   records:"any", fields:"fellowerId,
 
 //PublicGuest resources
 var pg_article = {resource:"Article", policies:[pg_articleReadPolicy]};
-var pg_user = {resource:"User", policies:[pg_userReadPolicy]};
+var pg_user = {resource:"User", policies:[pg_userCreatePolicy, pg_userReadPolicy]};
 var pg_comment = {resource:"Comment", policies:[pg_commentReadPolicy]};
 var pg_like = {resource:"Like", policies:[pg_likeReadPolicy]};
 var pg_tag = {resource:"Tag", policies:[pg_tagReadPolicy]};
@@ -104,26 +592,29 @@ var mod_createComment = {action:"create", records:"any", fields:"*", limit:{amou
 var mod_updateComment = {action:"update", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var mod_deleteComment = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var mod_readComment = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var mod_setUser = {action:"create", records:"any", fields:"username, displayName, password, FirstName, lastName, email,isSuspended", limit:{amount:-1, rule:""}};
-var mod_updateUser = {action:"update", records:"any", fields:"username, displayName, password, FirstName, lastName, email, isSuspended", limit:{amount:-1, rule:""}};
-var mod_deleteUser = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var mod_readUser = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
+var mod_updateUser = {action:"update", records:"any", fields:"username, displayName, FirstName, lastName, email, isSuspended", limit:{amount:-1, rule:""}};
+var mod_deleteUser = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var mod_readAdminUser = {action:"read", records:"$resource.roleId=1/i", fields:"displayName, email", limit:{amount:-1, rule:""}};
+var mod_readUser = {action:"read", records:"$resource.roleId!=1/i", fields:"*, !password", limit:{amount:-1, rule:""}};
 
 // Moderator resources
 var mod_article = {resource:"Article", policies:[mod_createArticle,mod_updateArticle,mod_deleteArticle,mod_readArticle]};
-var mod_user = {resource:"User", policies:[mod_setUser,mod_updateUser,mod_deleteUser,mod_readUser]};
+var mod_user = {resource:"User", policies:[mod_updateUser,mod_deleteUser,mod_readAdminUser, mod_readUser]};
 var mod_comment = {resource:"Comment", policies:[mod_createComment,mod_updateComment,mod_deleteComment,mod_readComment]};
-
 
 // Moderator role
 var mod_role = {role:"Moderator", inherits:"", grant:[mod_article, mod_user, mod_comment]}; 
-
 
 //---------------------------------------------------
 //                 Author
 //---------------------------------------------------
 //Author Policies
+var auth_readOwnUser = {action:"read", records:"$resource.roleId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_readUser = {action:"read", records:"$resource.roleId!=1/i", fields:"displayName, firstName, lastName, email", limit:{amount:-1, rule:""}};
+var auth_updateUser = {action:"update", records:"$resource.id!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteUser = {action:"delete", records:"$resource.id!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+
 var auth_createArticle 	  =	{action:"create", records:"any", fields:"title, bodyText, publishedDate, authorId, imageURL, note", limit:{amount:-1, rule:""}};
 var auth_updateArticle    =	{action:"update", records:"$resource.authorId=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL, note", limit:{amount:-1, rule:""}};
 var auth_deleteArticle    =	{action:"delete", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
@@ -131,7 +622,7 @@ var auth_readOwnArticle   =	{action:"read", records:"$resource.authorId=$user.id
 var auth_readOtherArticle = {action:"read", records:"$resource.authorId!=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
 
 var auth_createLike = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var auth_deleteLike = {action:"delete", records:"$resource.authorId =$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteLike = {action:"delete", records:"$resource.userId =$user.id", fields:"*", limit:{amount:-1, rule:""}};
 var auth_getLike = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
 var auth_createComment = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
@@ -140,19 +631,20 @@ var auth_readComment = {action:"read", records:"any", fields:"*", limit:{amount:
 var auth_deleteComment = {action:"delete", records:"resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 
 var auth_createFavourite = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var auth_deleteFavourite = {action:"delete", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var auth_readFavourite = {action:"read", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteFavourite = {action:"delete", records:"$resource.userId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_readFavourite = {action:"read", records:"$resource.userId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 
 var auth_createFollower = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var auth_deleteFollower = {action:"delete", records:"$resource.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_deleteFollower = {action:"delete", records:"$resource.followerId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 var auth_readFollower = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
 var auth_createTag = {action:"create", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 var auth_updateTag = {action:"update", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 var auth_deleteTag = {action:"delete", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var auth_readTag = {action:"read", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_readTag = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 	
 //Author resources
+var auth_user = {resource:"User", policies:[auth_readOwnUser, auth_readUser, auth_updateUser, auth_deleteUser]};
 var auth_article = {resource:"Article", policies:[auth_createArticle, auth_updateArticle, auth_deleteArticle, auth_readOwnArticle, auth_readOtherArticle]};
 var auth_like = {resource:"Like", policies:[auth_createLike,auth_deleteLike,auth_getLike]};
 var auth_comment = {resource:"Comment", policies:[auth_createComment,auth_updateComment,auth_readComment,auth_deleteComment]};
@@ -160,10 +652,8 @@ var auth_favourite = {resource:"Favourite", policies:[auth_createFavourite,auth_
 var auth_follower = {resource:"Follower", policies:[auth_createFollower,auth_deleteFollower,auth_readFollower]};
 var auth_tag = {resource:"Tag", policies:[auth_createTag,auth_updateTag,auth_deleteTag,auth_readTag]};
 
-
 //Author role
-var auth_role = {role:"Author", inherits:"", grant:[auth_article,auth_like,auth_comment,auth_favourite,auth_follower,auth_tag]}; 
-
+var auth_role = {role:"Author", inherits:"", grant:[auth_user, auth_article,auth_like,auth_comment,auth_favourite,auth_follower,auth_tag]}; 
 
 //---------------------------------------------------
 //                 PaidAuthor
@@ -173,9 +663,9 @@ var pauth_createRate ={action:"create", records:"SELECT * FROM Article WHERE Art
 var pauth_deleteRate ={action:"delete", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.Id=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 var pauth_readRate ={action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
-var pauth_createTag ={action:"create", records:"SELECT * FROM Article WHERE Article.authorId!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var pauth_updateTag = {action:"update", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
-var pauth_deleteTag ={action:"delete", records:"SELECT * FROM Article WHERE Article.Id=$resource.articleId AND Article.Id!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var pauth_createTag ={action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var pauth_updateTag = {action:"update", records:"$resource.userId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var pauth_deleteTag ={action:"delete", records:"$resource.userId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 var pauth_readRTag ={action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
 var pauth_deleteComment ={action:"delete", records:"SELECT * FROM Article WHERE Article.authorId=$user.id", fields:"*", limit:{amount:-1, rule:""}};
@@ -187,21 +677,36 @@ var pauth_rate = {resource:"Rate", policies:[pauth_createRate,pauth_deleteRate,p
 var pauth_comment = {resource:"Comment", policies:[pauth_deleteComment]};
 var pauth_tag = {resource:"Tag", policies:[pauth_createTag,pauth_updateTag,pauth_deleteTag,pauth_readRTag]};
 
-
-
 //PaidAuthor role
 
 var pauth_role = {role:"PaidAuthor", inherits:"Author", grant:[pauth_rate,pauth_comment,pauth_tag]}; 
 
-
-
-
 //---------------------------------------------------
-//                 Final Schema
+//                 RBAC Schema
 //---------------------------------------------------
 var schema = {accesscontrol:[admin_role, pg_role,auth_role,mod_role,pauth_role]};
 
-fs.writeFile("oktob_rbac.json", JSON.stringify(schema), function(err) {
+
+//---------------------------------------------------
+//                 Final Etqan JSON
+//---------------------------------------------------
+
+var finalJson = {
+		ApiPackage:"net.talaween.oktob",
+		projectName:"Oktob API",
+		apiVersion:"v0.6",
+		generateMockData:true,
+		settings: {
+		   superAdminUsername : "mahmoud",
+		   superAdminPassword:"",
+		   defaultRole: "Author"
+		},
+		classes:[userClass, articleClass, commentClass, likeClass, rateClass,
+			tagClass, favouriteClass, followerClass],
+		Schema: schema
+	};
+
+fs.writeFile("oktob_rbac.json", JSON.stringify(finalJson), function(err) {
     if(err) {
         return console.log(err);
     }
