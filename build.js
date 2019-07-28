@@ -561,12 +561,12 @@ var admin_role = {role:"Admin", inherits:"", grant:[
 //---------------------------------------------------
 //PublicGuest policies
 var pg_articleReadPolicy = {action:"read", records:"any", fields:"id, title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
-var pg_userReadPolicy = {action:"read",   records:"$resource.roleId!=1/i&$resource.roleId!=3/i", fields:"displayName", limit:{amount:-1, rule:""}};
+var pg_userReadPolicy = {action:"read",   records:"$resource.roleId!=1/i&$resource.roleId!=4/i", fields:"id, displayName", limit:{amount:-1, rule:""}};
 var pg_userCreatePolicy = {action:"create",   records:"any", fields:"username, displayName, password, firstName, lastName, email", limit:{amount:-1, rule:""}};
-var pg_commentReadPolicy = {action:"read",   records:"any", fields:"commentText, authorId, repliedTo", limit:{amount:-1, rule:""}};
-var pg_likeReadPolicy = {action:"read",   records:"any", fields:"userId, articleId", limit:{amount:-1, rule:""}};
-var pg_tagReadPolicy = {action:"read",   records:"any", fields:"tagText, articleId", limit:{amount:-1, rule:""}};
-var pg_followerReadPolicy = {action:"read",   records:"any", fields:"fellowerId, FelloweeId", limit:{amount:-1, rule:""}};	
+var pg_commentReadPolicy = {action:"read",   records:"any", fields:"id, commentText, authorId, repliedTo", limit:{amount:-1, rule:""}};
+var pg_likeReadPolicy = {action:"read",   records:"any", fields:"id, userId, articleId", limit:{amount:-1, rule:""}};
+var pg_tagReadPolicy = {action:"read",   records:"any", fields:"id, tagText, articleId", limit:{amount:-1, rule:""}};
+var pg_followerReadPolicy = {action:"read",   records:"any", fields:"id, fellowerId, FelloweeId", limit:{amount:-1, rule:""}};	
 
 //PublicGuest resources
 var pg_article = {resource:"Article", policies:[pg_articleReadPolicy]};
@@ -596,7 +596,7 @@ var mod_readComment = {action:"read", records:"any", fields:"*", limit:{amount:-
 
 var mod_updateUser = {action:"update", records:"any", fields:"username, displayName, firstName, lastName, email, isSuspended", limit:{amount:-1, rule:""}};
 var mod_deleteUser = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var mod_readAdminUser = {action:"read", records:"$resource.roleId=1/i", fields:"displayName, email", limit:{amount:-1, rule:""}};
+var mod_readAdminUser = {action:"read", records:"$resource.roleId=1/i", fields:"id, displayName, email", limit:{amount:-1, rule:""}};
 var mod_readUser = {action:"read", records:"$resource.roleId!=1/i", fields:"*, !password", limit:{amount:-1, rule:""}};
 
 // Moderator resources
