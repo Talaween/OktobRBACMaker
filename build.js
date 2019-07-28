@@ -7,7 +7,7 @@
 All resources has these common fields:
 id, creatorId, ownerId, dateCreated, dateModified, deleted, dateDeleted, note
 
-User		:(username, displayName, password, FirstName, lastName, email, isSuspended)
+User		:(username, displayName, password, firstName, lastName, email, isSuspended)
 Article		:(title, bodyText, publishedDate, authorId, imageURL, note, isDraft, isModerated)
 Comment		:(commentText, authorId, repliedTo, articleId)
 Like		:(userId, articleId)
@@ -37,7 +37,7 @@ const fs = require('fs');
 //---------------------------------------------------
 //                 User Class
 //---------------------------------------------------
-//(username, displayName, password, FirstName, lastName, email, isSuspended)
+//(username, displayName, password, firstName, lastName, email, isSuspended)
 
 
 var usernameField = {
@@ -122,7 +122,7 @@ var isSuspendedField = {
 		name:"isSuspended",
 		type:"Bool",
 		defaultValue:"false",
-		required:true,
+		required:false,
 		unique:false,
 		validation:{
 			min:4,
@@ -562,7 +562,7 @@ var admin_role = {role:"Admin", inherits:"", grant:[
 //PublicGuest policies
 var pg_articleReadPolicy = {action:"read", records:"any", fields:"id, title, bodyText, publishedDate, authorId, imageURL", limit:{amount:-1, rule:""}};
 var pg_userReadPolicy = {action:"read",   records:"$resource.roleId!=1/i&$resource.roleId!=3/i", fields:"displayName", limit:{amount:-1, rule:""}};
-var pg_userCreatePolicy = {action:"read",   records:"any", fields:"*", limit:{amount:-1, rule:""}};
+var pg_userCreatePolicy = {action:"create",   records:"any", fields:"username, displayName, password, firstName, lastName, email", limit:{amount:-1, rule:""}};
 var pg_commentReadPolicy = {action:"read",   records:"any", fields:"commentText, authorId, repliedTo", limit:{amount:-1, rule:""}};
 var pg_likeReadPolicy = {action:"read",   records:"any", fields:"userId, articleId", limit:{amount:-1, rule:""}};
 var pg_tagReadPolicy = {action:"read",   records:"any", fields:"tagText, articleId", limit:{amount:-1, rule:""}};
@@ -594,7 +594,7 @@ var mod_updateComment = {action:"update", records:"any", fields:"commentText, au
 var mod_deleteComment = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var mod_readComment = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
-var mod_updateUser = {action:"update", records:"any", fields:"username, displayName, FirstName, lastName, email, isSuspended", limit:{amount:-1, rule:""}};
+var mod_updateUser = {action:"update", records:"any", fields:"username, displayName, firstName, lastName, email, isSuspended", limit:{amount:-1, rule:""}};
 var mod_deleteUser = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var mod_readAdminUser = {action:"read", records:"$resource.roleId=1/i", fields:"displayName, email", limit:{amount:-1, rule:""}};
 var mod_readUser = {action:"read", records:"$resource.roleId!=1/i", fields:"*, !password", limit:{amount:-1, rule:""}};
@@ -611,10 +611,10 @@ var mod_role = {role:"Moderator", inherits:"", grant:[mod_article, mod_user, mod
 //                 Author
 //---------------------------------------------------
 //Author Policies
-var auth_readOwnUser = {action:"read", records:"$resource.roleId=$user.id", fields:"id, username, displayName, password, FirstName, lastName, email", limit:{amount:-1, rule:""}};
+var auth_readOwnUser = {action:"read", records:"$resource.roleId=$user.id", fields:"id, username, displayName, password, firstName, lastName, email", limit:{amount:-1, rule:""}};
 var auth_readUser = {action:"read", records:"$resource.roleId!=1/i", fields:"id, displayName, firstName, lastName, email", limit:{amount:-1, rule:""}};
-var auth_updateUser = {action:"update", records:"$resource.id!=$user.id", fields:"username, displayName, password, FirstName, lastName, email", limit:{amount:-1, rule:""}};
-var auth_deleteUser = {action:"delete", records:"$resource.id!=$user.id", fields:"*", limit:{amount:-1, rule:""}};
+var auth_updateUser = {action:"update", records:"$resource.id=$user.id", fields:"username, displayName, password, firstName, lastName, email", limit:{amount:-1, rule:""}};
+var auth_deleteUser = {action:"delete", records:"$resource.id=$user.id", fields:"*", limit:{amount:-1, rule:""}};
 
 var auth_createArticle 	  =	{action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var auth_updateArticle    =	{action:"update", records:"$resource.authorId=$user.id", fields:"title, bodyText, publishedDate, authorId, imageURL, editingNote", limit:{amount:-1, rule:""}};
