@@ -585,12 +585,12 @@ var pg_role = {role:"PublicGuest", inherits:"", grant:[pg_article, pg_user, pg_c
 //---------------------------------------------------
 // Moderator Policies
 var mod_createArticle = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var mod_updateArticle = {action:"update", records:"any", fields:"title, bodyText, publishedDate, authorId, imageURL, note, isDraft, isModerated", limit:{amount:-1, rule:""}};
-
+var mod_updateArticle = {action:"update", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var mod_deleteArticle = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var mod_readArticle = {action:"read", records:"any", fields:"id, creatorId, ownerId, dateCreated, dateModified, title, bodyText, publishedDate, authorId, imageURL, editingNote,isModerated,isDraft", limit:{amount:-1, rule:""}};
+var mod_readArticle = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
+
 var mod_createComment = {action:"create", records:"any", fields:"*", limit:{amount:-1, rule:""}};
-var mod_updateComment = {action:"update", records:"any", fields:"commentText, authorId, repliedTo, articleId", limit:{amount:-1, rule:""}};
+var mod_updateComment = {action:"update", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var mod_deleteComment = {action:"delete", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 var mod_readComment = {action:"read", records:"any", fields:"*", limit:{amount:-1, rule:""}};
 
